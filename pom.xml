@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>morbrian</groupId>
+    <artifactId>morbrian-nifi</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <version.nifi>1.1.2</version.nifi>
+        <version.yammer>2.2.0</version.yammer>
+        <version.dropwizard>3.1.0</version.dropwizard>
+        <version.dropwizard-elasticsearch>1.2.0-1</version.dropwizard-elasticsearch>
+        <version.javax.json>1.0.4</version.javax.json>
+        <version.nifi-nar-maven-plugin>1.0.0-incubating</version.nifi-nar-maven-plugin>
+        <version.maven-surefire-plugin>2.15</version.maven-surefire-plugin>
+        <version.maven-release-plugin>2.5.2</version.maven-release-plugin>
+        <version.maven-scm-provider-gitexe>1.9.4</version.maven-scm-provider-gitexe>
+        <version.rpm-maven-plugin>2.1.5</version.rpm-maven-plugin>
+        <version.junit>4.12</version.junit>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${version.maven-release-plugin}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-provider-gitexe</artifactId>
+                        <version>${version.maven-scm-provider-gitexe}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-nar-maven-plugin</artifactId>
+                <version>${version.nifi-nar-maven-plugin}</version>
+                <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.maven-surefire-plugin}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>${version.rpm-maven-plugin}</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-api</artifactId>
+                <scope>provided</scope>
+                <version>${version.nifi}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-processor-utils</artifactId>
+                <version>${version.nifi}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-utils</artifactId>
+                <version>${version.nifi}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.yammer.metrics</groupId>
+                <artifactId>metrics-core</artifactId>
+                <version>${version.yammer}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-core</artifactId>
+                <version>${version.dropwizard}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.json</artifactId>
+                <version>${version.javax.json}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.modules</groupId>
+                <artifactId>dropwizard-elasticsearch</artifactId>
+                <version>${version.dropwizard-elasticsearch}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>nifi-category-counting-bundle</module>
+        <module>nifi-extended-bundle</module>
+        <module>nifi-elasticsearch-reporting-bundle</module>
+    </modules>
+
+</project>

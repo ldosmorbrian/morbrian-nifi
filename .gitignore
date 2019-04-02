@@ -1,0 +1,65 @@
+## certificate artifacts
+*.p12
+*.jks
+*.cer
+
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+*.log
+logs/*
+log/*
+tmp/*
+
+# maven conventions
+target
+dependency-reduced-pom.xml
+
+# java specific
+*.class
+
+# python specific
+*.pyc
+
+# eclipse specific
+.metadata
+jrebel.lic
+.classpath
+.project
+.settings
+.ensime*
+*.sublime-*
+.cache
+
+# intellij
+*.eml
+*.iml
+*.ipr
+*.iws
+.*.sw?
+.idea
+
+# gradle
+.gradle
+build/
+out/
+
+# ui build (Grunt/gulp/node)
+*.sw*
+.tmp
+node_modules
+bower_components
+vendor
+/.metadata/
+
+# cac jgit
+card.config
+jssecacerts
+pkcs11.config
+
+# vscode
+.vscode/
+
