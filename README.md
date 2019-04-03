@@ -24,6 +24,6 @@ https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-
 
 https://www.elastic.co/guide/en/elasticsearch/reference/5.5/general-recommendations.html
 
-
+nested mapping: https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-mapping.html
 
 
