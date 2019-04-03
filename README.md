@@ -14,4 +14,16 @@ docker-compose up
 
 Connect with: http://127.0.0.1:5601
 
+## Examples to get started with 
+
+https://www.elastic.co/guide/en/kibana/3.0/import-some-data.html
+
+https://www.elastic.co/guide/en/kibana/4.5/getting-started.html
+
+https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high-put-mapping.html
+
+https://www.elastic.co/guide/en/elasticsearch/reference/5.5/general-recommendations.html
+
+
+
 
