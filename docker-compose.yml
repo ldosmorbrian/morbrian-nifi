@@ -1,0 +1,32 @@
+# Create simple elasticsearch / kibana configuration.
+---
+
+version: "3.3"
+
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    image: elasticsearch:2.3.3
+    ports:
+      - "9200:9200"
+    networks:
+      - cluster
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+  kibana:
+    container_name: kibana
+    environment:
+      - "SERVER_NAME=kibana"
+      - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+    image: kibana:4.5.1
+    ports:
+      - "5601:5601"
+    networks:
+      - cluster
+
+networks:
+  cluster:
+volumes:
+  esdata1:
