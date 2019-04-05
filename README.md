@@ -22,6 +22,18 @@ curl -XPUT 'http://localhost:9200/nifi/_index' -d @nifi-elasticsearch-reporting-
 
  curl -XPUT 'http://localhost:9200/nifi/reporting/_mapping' -d @nifi-elasticsearch-reporting-bundle/nifi-elasticsearch-sonorting/src/main/resources/mappings.js
 
+## add some data
+
+curl -XPOST 'http://localhost:9200/nifi/reporting' -d @tmp/sample.json
+
+## list indices
+
+http://localhost:9200/_cat/indices?v
+
+## view all contents of index
+
+curl -H 'Content-Type: application/json' -X GET http://localhost:9200/nifi/_search?pretty
+
 ## Examples to get started with 
 
 https://www.elastic.co/guide/en/kibana/3.0/import-some-data.html
