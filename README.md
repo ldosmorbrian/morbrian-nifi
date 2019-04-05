@@ -14,6 +14,14 @@ docker-compose up
 
 Connect with: http://127.0.0.1:5601
 
+## create index
+
+curl -XPUT 'http://localhost:9200/nifi/_index' -d @nifi-elasticsearch-reporting-bundle/nifi-elasticsearch-reporting/src/main/resources/index.json
+
+## associate mapping
+
+ curl -XPUT 'http://localhost:9200/nifi/reporting/_mapping' -d @nifi-elasticsearch-reporting-bundle/nifi-elasticsearch-sonorting/src/main/resources/mappings.js
+
 ## Examples to get started with 
 
 https://www.elastic.co/guide/en/kibana/3.0/import-some-data.html

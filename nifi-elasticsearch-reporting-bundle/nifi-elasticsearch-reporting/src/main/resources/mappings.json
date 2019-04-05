@@ -1,0 +1,15 @@
+{
+  "reporting": {
+    "properties": {
+      "date": {
+        "type": "date"
+      },
+      "gauges": {
+        "type": "object"
+      },
+      "counters": {
+        "type": "object"
+      }
+    }
+  }
+}
