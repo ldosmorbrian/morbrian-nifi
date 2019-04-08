@@ -8,6 +8,7 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.Timer;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.json.Json;
@@ -22,9 +23,20 @@ public class ElasticsearchReporter extends ScheduledReporter {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchReporter.class);
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    public ElasticsearchReporter(MetricRegistry metricRegistry) {
+    private URL esUrl;
+
+    public ElasticsearchReporter(MetricRegistry metricRegistry, URL esUrl) {
         super(metricRegistry, "elasticsearch-reporter", MetricFilter.ALL,
             TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
+        this.esUrl = esUrl;
+    }
+
+    public void setEsUrl(URL esUrl) {
+        this.esUrl = esUrl;
+    }
+
+    public URL getEsUrl() {
+        return esUrl;
     }
 
     @Override
@@ -48,6 +60,8 @@ public class ElasticsearchReporter extends ScheduledReporter {
         // log report
         String report = reportBuilder.build().toString();
         LOG.info(report);
+
+
     }
 
 }

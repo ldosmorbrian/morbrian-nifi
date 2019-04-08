@@ -7,6 +7,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.yammer.metrics.core.VirtualMachineMetrics;
+import java.net.MalformedURLException;
+import java.net.URL;
 import morbrian.nifi.reporting.elasticsearch.metrics.MetricsService;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.Tags;
@@ -20,6 +22,7 @@ import org.apache.nifi.controller.status.ProcessorStatus;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.reporting.AbstractReportingTask;
 import org.apache.nifi.reporting.ReportingContext;
+import org.elasticsearch.script.ScriptContext.Standard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,14 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @CapabilityDescription("Publishes metrics from NiFi to elasticsearch. For accurate and informative reporting, components should have unique names.")
 public class ElasticsearchReportingTask extends AbstractReportingTask {
 
-    static final PropertyDescriptor METRICS_PREFIX = new PropertyDescriptor.Builder()
-            .name("Metrics prefix")
-            .description("Prefix to be added before every metric")
-            .required(true)
-            .expressionLanguageSupported(true)
-            .defaultValue("nifi")
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-            .build();
+    private static final String METRIC_NAME_SEPARATOR = "-";
 
     static final PropertyDescriptor ENVIRONMENT = new PropertyDescriptor.Builder()
             .name("Environment")
@@ -52,12 +48,22 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 
+    static final PropertyDescriptor ES_URL = new PropertyDescriptor.Builder()
+        .name("Elasticsearch Index Url")
+        .description("Elasticsearch URL including path with index and type.")
+        .required(true)
+        .expressionLanguageSupported(true)
+        .defaultValue("http://localhost:9200/nifi/reporting")
+        .addValidator(StandardValidators.URI_VALIDATOR)
+        .build();
+
+
     private MetricsService metricsService;
     private ESMetricRegistryBuilder esMetricRegistryBuilder;
     private MetricRegistry metricRegistry;
-    private String metricsPrefix;
     private String environment;
     private String statusId;
+    private URL esUrl;
     private ConcurrentHashMap<String, AtomicDouble> metricsMap;
     private Map<String, String> defaultTags;
     private volatile VirtualMachineMetrics virtualMachineMetrics;
@@ -69,19 +75,17 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
         esMetricRegistryBuilder = getMetricRegistryBuilder();
         metricRegistry = getMetricRegistry();
         metricsMap = getMetricsMap();
-        metricsPrefix = METRICS_PREFIX.getDefaultValue();
         environment = ENVIRONMENT.getDefaultValue();
         virtualMachineMetrics = VirtualMachineMetrics.getInstance();
         esMetricRegistryBuilder.setMetricRegistry(metricRegistry).setTags(metricsService.getAllTagsList());
+        esUrl = getValidUrlOrNull(ES_URL.getDefaultValue());
     }
 
     @Override
     protected List<PropertyDescriptor> getSupportedPropertyDescriptors() {
         final List<PropertyDescriptor> properties = new ArrayList<>();
-        properties.add(METRICS_PREFIX);
+        properties.add(ES_URL);
         properties.add(ENVIRONMENT);
-        //TODO: properties.add(API_KEY);
-        //TODO: properties.add(DATADOG_TRANSPORT);
         return properties;
     }
 
@@ -89,10 +93,12 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
     public void onTrigger(ReportingContext context) {
         final ProcessGroupStatus status = context.getEventAccess().getControllerStatus();
 
-        metricsPrefix = context.getProperty(METRICS_PREFIX).evaluateAttributeExpressions().getValue();
+        esUrl = getValidUrlOrNull(context.getProperty(ES_URL).evaluateAttributeExpressions().getValue());
         environment = context.getProperty(ENVIRONMENT).evaluateAttributeExpressions().getValue();
         statusId = status.getId();
         defaultTags = ImmutableMap.of("env", environment, "dataflow_id", statusId);
+
+        esMetricRegistryBuilder.setEsUrl(esUrl);
 
         esMetricRegistryBuilder.build();
         updateAllMetricGroups(status);
@@ -174,16 +180,6 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
         }
     }
 
-//    private void updateDataDogTransport(ReportingContext context) throws IOException {
-//        String dataDogTransport = context.getProperty(DATADOG_TRANSPORT).getValue();
-//        if (dataDogTransport.equalsIgnoreCase(DATADOG_AGENT.getValue())) {
-//            ddMetricRegistryBuilder.build("agent");
-//        } else if (dataDogTransport.equalsIgnoreCase(DATADOG_HTTP.getValue())
-//                && context.getProperty(API_KEY).isSet()) {
-//            ddMetricRegistryBuilder.build(context.getProperty(API_KEY).getValue());
-//        }
-//    }
-
     private void populateProcessorStatuses(final ProcessGroupStatus groupStatus, final List<ProcessorStatus> statuses) {
         statuses.addAll(groupStatus.getProcessorStatus());
         for (final ProcessGroupStatus childGroupStatus : groupStatus.getProcessGroupStatus()) {
@@ -213,7 +209,7 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
     }
 
     private String buildMetricName(Optional<String> processorName, String metricName) {
-        return metricsPrefix + "." + processorName.or("flow") + "." + metricName;
+        return makeNameSafeForEs(processorName.or("flow")) + METRIC_NAME_SEPARATOR + metricName;
     }
 
     protected MetricsService getMetricsService() {
@@ -230,5 +226,19 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
 
     protected ConcurrentHashMap<String, AtomicDouble> getMetricsMap() {
         return new ConcurrentHashMap<>();
+    }
+
+    private URL getValidUrlOrNull(String urlString) {
+        try {
+            return new URL(urlString);
+        } catch (MalformedURLException exc) {
+            // since we have an input validator this would be highly unexpected.
+            getLogger().error("URL is invalid: " + urlString, exc);
+            return null;
+        }
+    }
+
+    private String makeNameSafeForEs(String name) {
+        return name.replace('.', '-');
     }
 }
