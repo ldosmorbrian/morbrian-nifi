@@ -16,12 +16,12 @@
  */
 package morbrian.nifi.reporting.elasticsearch.api;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Builds the overall JsonObject for the Metrics.

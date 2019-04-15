@@ -17,16 +17,15 @@
 package morbrian.nifi.reporting.elasticsearch.metrics;
 
 import com.yammer.metrics.core.VirtualMachineMetrics;
-import org.apache.nifi.controller.status.ConnectionStatus;
-import org.apache.nifi.controller.status.PortStatus;
-import org.apache.nifi.controller.status.ProcessGroupStatus;
-import org.apache.nifi.controller.status.ProcessorStatus;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.nifi.controller.status.ConnectionStatus;
+import org.apache.nifi.controller.status.PortStatus;
+import org.apache.nifi.controller.status.ProcessGroupStatus;
+import org.apache.nifi.controller.status.ProcessorStatus;
 
 /**
  * A service used to produce key/value metrics based on a given input.
@@ -36,26 +35,26 @@ public class MetricsService {
     //processor - specific metrics
     public Map<String, Double> getProcessorMetrics(ProcessorStatus status) {
         final Map<String, Double> metrics = new HashMap<>();
-        metrics.put(MetricNames.FLOW_FILES_RECEIVED, new Double(status.getInputCount()));
-        metrics.put(MetricNames.FLOW_FILES_SENT, new Double(status.getOutputCount()));
-        metrics.put(MetricNames.BYTES_READ, new Double(status.getInputBytes()));
-        metrics.put(MetricNames.BYTES_WRITTEN, new Double(status.getOutputBytes()));
-        metrics.put(MetricNames.ACTIVE_THREADS, new Double(status.getActiveThreadCount()));
-        metrics.put(MetricNames.TOTAL_TASK_DURATION, new Double(status.getProcessingNanos()));
+        metrics.put(MetricNames.FLOW_FILES_RECEIVED, (double)status.getInputCount());
+        metrics.put(MetricNames.FLOW_FILES_SENT, (double)status.getOutputCount());
+        metrics.put(MetricNames.BYTES_READ, (double)status.getInputBytes());
+        metrics.put(MetricNames.BYTES_WRITTEN, (double)status.getOutputBytes());
+        metrics.put(MetricNames.ACTIVE_THREADS, (double)status.getActiveThreadCount());
+        metrics.put(MetricNames.TOTAL_TASK_DURATION, (double)status.getProcessingNanos());
         return metrics;
     }
 
     public Map<String, Double> getPortStatusMetrics(PortStatus status){
         final Map<String, Double> metrics = new HashMap<>();
-        metrics.put(MetricNames.ACTIVE_THREADS, new Double(status.getActiveThreadCount()));
-        metrics.put(MetricNames.INPUT_COUNT, new Double(status.getInputCount()));
-        metrics.put(MetricNames.OUTPUT_COUNT, new Double(status.getOutputCount()));
-        metrics.put(MetricNames.INPUT_BYTES, new Double(status.getInputBytes()));
-        metrics.put(MetricNames.OUTPUT_BYTES, new Double(status.getOutputBytes()));
-        metrics.put(MetricNames.FLOW_FILES_RECEIVED, new Double(status.getFlowFilesReceived()));
-        metrics.put(MetricNames.FLOW_FILES_SENT, new Double(status.getFlowFilesSent()));
-        metrics.put(MetricNames.BYTES_RECEIVED, new Double(status.getBytesReceived()));
-        metrics.put(MetricNames.BYTES_SENT, new Double(status.getBytesSent()));
+        metrics.put(MetricNames.ACTIVE_THREADS, (double)status.getActiveThreadCount());
+        metrics.put(MetricNames.INPUT_COUNT, (double)status.getInputCount());
+        metrics.put(MetricNames.OUTPUT_COUNT, (double)status.getOutputCount());
+        metrics.put(MetricNames.INPUT_BYTES, (double)status.getInputBytes());
+        metrics.put(MetricNames.OUTPUT_BYTES, (double)status.getOutputBytes());
+        metrics.put(MetricNames.FLOW_FILES_RECEIVED,(double)status.getFlowFilesReceived());
+        metrics.put(MetricNames.FLOW_FILES_SENT, (double)status.getFlowFilesSent());
+        metrics.put(MetricNames.BYTES_RECEIVED, (double)status.getBytesReceived());
+        metrics.put(MetricNames.BYTES_SENT, (double)status.getBytesSent());
         return metrics;
     }
 
@@ -81,12 +80,12 @@ public class MetricsService {
 
     public Map<String, Double> getConnectionStatusMetrics(ConnectionStatus status) {
         final Map<String, Double> metrics = new HashMap<>();
-        metrics.put(MetricNames.INPUT_COUNT, new Double(status.getInputCount()));
-        metrics.put(MetricNames.INPUT_BYTES, new Double(status.getInputBytes()));
-        metrics.put(MetricNames.QUEUED_COUNT, new Double(status.getQueuedCount()));
-        metrics.put(MetricNames.QUEUED_BYTES, new Double(status.getQueuedBytes()));
-        metrics.put(MetricNames.OUTPUT_COUNT, new Double(status.getOutputCount()));
-        metrics.put(MetricNames.OUTPUT_BYTES, new Double(status.getOutputBytes()));
+        metrics.put(MetricNames.INPUT_COUNT, (double)status.getInputCount());
+        metrics.put(MetricNames.INPUT_BYTES, (double)status.getInputBytes());
+        metrics.put(MetricNames.QUEUED_COUNT, (double)status.getQueuedCount());
+        metrics.put(MetricNames.QUEUED_BYTES, (double)status.getQueuedBytes());
+        metrics.put(MetricNames.OUTPUT_COUNT, (double)status.getOutputCount());
+        metrics.put(MetricNames.OUTPUT_BYTES, (double)status.getOutputBytes());
         return metrics;
     }
 
@@ -94,16 +93,16 @@ public class MetricsService {
     //general metrics for whole dataflow
     public Map<String, Double> getDataFlowMetrics(ProcessGroupStatus status) {
         final Map<String, Double> metrics = new HashMap<>();
-        metrics.put(MetricNames.FLOW_FILES_RECEIVED, new Double(status.getFlowFilesReceived()));
-        metrics.put(MetricNames.BYTES_RECEIVED, new Double(status.getBytesReceived()));
-        metrics.put(MetricNames.FLOW_FILES_SENT, new Double(status.getFlowFilesSent()));
-        metrics.put(MetricNames.BYTES_SENT, new Double(status.getBytesSent()));
-        metrics.put(MetricNames.FLOW_FILES_QUEUED, new Double(status.getQueuedCount()));
-        metrics.put(MetricNames.BYTES_QUEUED, new Double(status.getQueuedContentSize()));
-        metrics.put(MetricNames.BYTES_READ, new Double(status.getBytesRead()));
-        metrics.put(MetricNames.BYTES_WRITTEN, new Double(status.getBytesWritten()));
-        metrics.put(MetricNames.ACTIVE_THREADS, new Double(status.getActiveThreadCount()));
-        metrics.put(MetricNames.TOTAL_TASK_DURATION, new Double(calculateProcessingNanos(status)));
+        metrics.put(MetricNames.FLOW_FILES_RECEIVED, (double)status.getFlowFilesReceived());
+        metrics.put(MetricNames.BYTES_RECEIVED, (double)status.getBytesReceived());
+        metrics.put(MetricNames.FLOW_FILES_SENT, (double)status.getFlowFilesSent());
+        metrics.put(MetricNames.BYTES_SENT, (double)status.getBytesSent());
+        metrics.put(MetricNames.FLOW_FILES_QUEUED, (double)status.getQueuedCount());
+        metrics.put(MetricNames.BYTES_QUEUED, (double)status.getQueuedContentSize());
+        metrics.put(MetricNames.BYTES_READ, (double)status.getBytesRead());
+        metrics.put(MetricNames.BYTES_WRITTEN, (double)status.getBytesWritten());
+        metrics.put(MetricNames.ACTIVE_THREADS, (double)status.getActiveThreadCount());
+        metrics.put(MetricNames.TOTAL_TASK_DURATION, (double)calculateProcessingNanos(status));
         status.getOutputPortStatus();
         return metrics;
     }
@@ -128,28 +127,28 @@ public class MetricsService {
     //virtual machine metrics
     public Map<String, Double> getJVMMetrics(VirtualMachineMetrics virtualMachineMetrics) {
         final Map<String, Double> metrics = new HashMap<>();
-        metrics.put(MetricNames.JVM_UPTIME, new Double(virtualMachineMetrics.uptime()));
-        metrics.put(MetricNames.JVM_HEAP_USED, new Double(virtualMachineMetrics.heapUsed()));
-        metrics.put(MetricNames.JVM_HEAP_USAGE, new Double(virtualMachineMetrics.heapUsage()));
-        metrics.put(MetricNames.JVM_NON_HEAP_USAGE, new Double(virtualMachineMetrics.nonHeapUsage()));
-        metrics.put(MetricNames.JVM_THREAD_COUNT, new Double(virtualMachineMetrics.threadCount()));
-        metrics.put(MetricNames.JVM_DAEMON_THREAD_COUNT, new Double(virtualMachineMetrics.daemonThreadCount()));
-        metrics.put(MetricNames.JVM_FILE_DESCRIPTOR_USAGE, new Double(virtualMachineMetrics.fileDescriptorUsage()));
+        metrics.put(MetricNames.JVM_UPTIME, (double)virtualMachineMetrics.uptime());
+        metrics.put(MetricNames.JVM_HEAP_USED, virtualMachineMetrics.heapUsed());
+        metrics.put(MetricNames.JVM_HEAP_USAGE, virtualMachineMetrics.heapUsage());
+        metrics.put(MetricNames.JVM_NON_HEAP_USAGE, virtualMachineMetrics.nonHeapUsage());
+        metrics.put(MetricNames.JVM_THREAD_COUNT, (double)virtualMachineMetrics.threadCount());
+        metrics.put(MetricNames.JVM_DAEMON_THREAD_COUNT, (double)virtualMachineMetrics.daemonThreadCount());
+        metrics.put(MetricNames.JVM_FILE_DESCRIPTOR_USAGE, virtualMachineMetrics.fileDescriptorUsage());
 
         for (Map.Entry<Thread.State, Double> entry : virtualMachineMetrics.threadStatePercentages().entrySet()) {
             final int normalizedValue = (int) (100 * (entry.getValue() == null ? 0 : entry.getValue()));
             switch (entry.getKey()) {
                 case BLOCKED:
-                    metrics.put(MetricNames.JVM_THREAD_STATES_BLOCKED, new Double(normalizedValue));
+                    metrics.put(MetricNames.JVM_THREAD_STATES_BLOCKED, (double)normalizedValue);
                     break;
                 case RUNNABLE:
-                    metrics.put(MetricNames.JVM_THREAD_STATES_RUNNABLE, new Double(normalizedValue));
+                    metrics.put(MetricNames.JVM_THREAD_STATES_RUNNABLE, (double)normalizedValue);
                     break;
                 case TERMINATED:
-                    metrics.put(MetricNames.JVM_THREAD_STATES_TERMINATED, new Double(normalizedValue));
+                    metrics.put(MetricNames.JVM_THREAD_STATES_TERMINATED, (double)normalizedValue);
                     break;
                 case TIMED_WAITING:
-                    metrics.put(MetricNames.JVM_THREAD_STATES_TIMED_WAITING, new Double(normalizedValue));
+                    metrics.put(MetricNames.JVM_THREAD_STATES_TIMED_WAITING, (double)normalizedValue);
                     break;
                 default:
                     break;
@@ -160,8 +159,8 @@ public class MetricsService {
             final String gcName = entry.getKey().replace(" ", "");
             final long runs = entry.getValue().getRuns();
             final long timeMS = entry.getValue().getTime(TimeUnit.MILLISECONDS);
-            metrics.put(MetricNames.JVM_GC_RUNS + "." + gcName,new Double(runs));
-            metrics.put(MetricNames.JVM_GC_TIME + "." + gcName, new Double(timeMS));
+            metrics.put(MetricNames.JVM_GC_RUNS + MetricNames.NAME_SEP + gcName, (double)runs);
+            metrics.put(MetricNames.JVM_GC_TIME + MetricNames.NAME_SEP + gcName, (double)timeMS);
         }
 
         return metrics;

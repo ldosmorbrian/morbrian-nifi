@@ -21,6 +21,8 @@ package morbrian.nifi.reporting.elasticsearch.metrics;
  */
 public interface MetricNames {
 
+    public static final char NAME_SEP = '_';
+
     // NiFi Metrics
     String FLOW_FILES_RECEIVED = "FlowFilesReceivedLast5Minutes";
     String BYTES_RECEIVED = "BytesReceivedLast5Minutes";
@@ -34,19 +36,19 @@ public interface MetricNames {
     String TOTAL_TASK_DURATION = "TotalTaskDurationSeconds";
 
     // JVM Metrics
-    String JVM_UPTIME = "jvm.uptime";
-    String JVM_HEAP_USED = "jvm.heap_used";
-    String JVM_HEAP_USAGE = "jvm.heap_usage";
-    String JVM_NON_HEAP_USAGE = "jvm.non_heap_usage";
-    String JVM_THREAD_STATES_RUNNABLE = "jvm.thread_states.runnable";
-    String JVM_THREAD_STATES_BLOCKED = "jvm.thread_states.blocked";
-    String JVM_THREAD_STATES_TIMED_WAITING = "jvm.thread_states.timed_waiting";
-    String JVM_THREAD_STATES_TERMINATED = "jvm.thread_states.terminated";
-    String JVM_THREAD_COUNT = "jvm.thread_count";
-    String JVM_DAEMON_THREAD_COUNT = "jvm.daemon_thread_count";
-    String JVM_FILE_DESCRIPTOR_USAGE = "jvm.file_descriptor_usage";
-    String JVM_GC_RUNS = "jvm.gc.runs";
-    String JVM_GC_TIME = "jvm.gc.time";
+    String JVM_UPTIME = "jvm_uptime";
+    String JVM_HEAP_USED = "jvm_heap_used";
+    String JVM_HEAP_USAGE = "jvm_heap_usage";
+    String JVM_NON_HEAP_USAGE = "jvm_non_heap_usage";
+    String JVM_THREAD_STATES_RUNNABLE = "jvm_thread_states_runnable";
+    String JVM_THREAD_STATES_BLOCKED = "jvm_thread_states_blocked";
+    String JVM_THREAD_STATES_TIMED_WAITING = "jvm_thread_states_timed_waiting";
+    String JVM_THREAD_STATES_TERMINATED = "jvm_thread_states_terminated";
+    String JVM_THREAD_COUNT = "jvm_thread_count";
+    String JVM_DAEMON_THREAD_COUNT = "jvm_daemon_thread_count";
+    String JVM_FILE_DESCRIPTOR_USAGE = "jvm_file_descriptor_usage";
+    String JVM_GC_RUNS = "jvm_gc_runs";
+    String JVM_GC_TIME = "jvm_gc_time";
 
     // Port status metrics
     String INPUT_COUNT = "InputCount";

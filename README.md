@@ -12,15 +12,19 @@ sudo docker pull kibana:4.5.1
 run as:
 docker-compose up
 
-Connect with: http://127.0.0.1:5601
+Connect to Kibana with: http://127.0.0.1:5601
 
 ## create index
 
-curl -XPUT 'http://localhost:9200/nifi/_index' -d @nifi-elasticsearch-reporting-bundle/nifi-elasticsearch-reporting/src/main/resources/index.json
+curl -XPUT 'http://localhost:9200/nifi/reporting/_index' -d @nifi-elasticsearch-reporting-bundle/nifi-elasticsearch-reporting/src/main/resources/index.json
+
+## check if index exists
+
+curl -I 'http://localhost:9200/nifi/reporting'
 
 ## associate mapping
 
- curl -XPUT 'http://localhost:9200/nifi/reporting/_mapping' -d @nifi-elasticsearch-reporting-bundle/nifi-elasticsearch-sonorting/src/main/resources/mappings.js
+curl -XPUT 'http://localhost:9200/nifi/reporting/_mapping' -d @nifi-elasticsearch-reporting-bundle/nifi-elasticsearch-reporting/src/main/resources/mappings.json
 
 ## add some data
 

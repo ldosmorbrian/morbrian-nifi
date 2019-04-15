@@ -9,7 +9,14 @@ import com.google.common.util.concurrent.AtomicDouble;
 import com.yammer.metrics.core.VirtualMachineMetrics;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import morbrian.nifi.reporting.elasticsearch.metrics.MetricNames;
 import morbrian.nifi.reporting.elasticsearch.metrics.MetricsService;
+import okhttp3.OkHttpClient;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.annotation.lifecycle.OnScheduled;
@@ -22,21 +29,10 @@ import org.apache.nifi.controller.status.ProcessorStatus;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.reporting.AbstractReportingTask;
 import org.apache.nifi.reporting.ReportingContext;
-import org.elasticsearch.script.ScriptContext.Standard;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Tags({"reporting", "elasticsearch", "metrics"})
 @CapabilityDescription("Publishes metrics from NiFi to elasticsearch. For accurate and informative reporting, components should have unique names.")
 public class ElasticsearchReportingTask extends AbstractReportingTask {
-
-    private static final String METRIC_NAME_SEPARATOR = "-";
 
     static final PropertyDescriptor ENVIRONMENT = new PropertyDescriptor.Builder()
             .name("Environment")
@@ -57,6 +53,8 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
         .addValidator(StandardValidators.URI_VALIDATOR)
         .build();
 
+    private final OkHttpClient client = new OkHttpClient();
+
 
     private MetricsService metricsService;
     private ESMetricRegistryBuilder esMetricRegistryBuilder;
@@ -67,7 +65,6 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
     private ConcurrentHashMap<String, AtomicDouble> metricsMap;
     private Map<String, String> defaultTags;
     private volatile VirtualMachineMetrics virtualMachineMetrics;
-    private Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     @OnScheduled
     public void setup(final ConfigurationContext context) {
@@ -77,7 +74,9 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
         metricsMap = getMetricsMap();
         environment = ENVIRONMENT.getDefaultValue();
         virtualMachineMetrics = VirtualMachineMetrics.getInstance();
-        esMetricRegistryBuilder.setMetricRegistry(metricRegistry).setTags(metricsService.getAllTagsList());
+        esMetricRegistryBuilder.setMetricRegistry(metricRegistry)
+            .setTags(metricsService.getAllTagsList())
+            .setClient(client);
         esUrl = getValidUrlOrNull(ES_URL.getDefaultValue());
     }
 
@@ -108,7 +107,7 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
     protected void updateMetrics(Map<String, Double> metrics, Optional<String> processorName, Map<String, String> tags) {
         for (Map.Entry<String, Double> entry : metrics.entrySet()) {
             final String metricName = buildMetricName(processorName, entry.getKey());
-            logger.debug(metricName + ": " + entry.getValue());
+            getLogger().debug(metricName + ": " + entry.getValue());
             //if metric is not registered yet - register it
             if (!metricsMap.containsKey(metricName)) {
                 metricsMap.put(metricName, new AtomicDouble(entry.getValue()));
@@ -209,7 +208,7 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
     }
 
     private String buildMetricName(Optional<String> processorName, String metricName) {
-        return makeNameSafeForEs(processorName.or("flow")) + METRIC_NAME_SEPARATOR + metricName;
+        return processorName.or("flow") + MetricNames.NAME_SEP + metricName;
     }
 
     protected MetricsService getMetricsService() {
@@ -236,9 +235,5 @@ public class ElasticsearchReportingTask extends AbstractReportingTask {
             getLogger().error("URL is invalid: " + urlString, exc);
             return null;
         }
-    }
-
-    private String makeNameSafeForEs(String name) {
-        return name.replace('.', '-');
     }
 }

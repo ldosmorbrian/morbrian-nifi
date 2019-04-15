@@ -15,8 +15,11 @@
         <version.yammer>2.2.0</version.yammer>
         <version.dropwizard>3.1.0</version.dropwizard>
         <version.dropwizard-elasticsearch>1.2.0-1</version.dropwizard-elasticsearch>
+        <version.google-collections>1.0</version.google-collections>
+        <version.guava>27.1-jre</version.guava>
         <version.javax.json>1.0.4</version.javax.json>
         <version.nifi-nar-maven-plugin>1.0.0-incubating</version.nifi-nar-maven-plugin>
+        <version.okhttp>3.14.1</version.okhttp>
         <version.maven-surefire-plugin>2.15</version.maven-surefire-plugin>
         <version.maven-release-plugin>2.5.2</version.maven-release-plugin>
         <version.maven-scm-provider-gitexe>1.9.4</version.maven-scm-provider-gitexe>
@@ -87,14 +90,29 @@
                 <version>${version.dropwizard}</version>
             </dependency>
             <dependency>
+                <groupId>com.google.collections</groupId>
+                <artifactId>google-collections</artifactId>
+                <version>${version.google-collections}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${version.guava}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>javax.json</artifactId>
                 <version>${version.javax.json}</version>
             </dependency>
             <dependency>
-                <groupId>io.dropwizard.modules</groupId>
-                <artifactId>dropwizard-elasticsearch</artifactId>
-                <version>${version.dropwizard-elasticsearch}</version>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${version.okhttp}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-mock</artifactId>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
