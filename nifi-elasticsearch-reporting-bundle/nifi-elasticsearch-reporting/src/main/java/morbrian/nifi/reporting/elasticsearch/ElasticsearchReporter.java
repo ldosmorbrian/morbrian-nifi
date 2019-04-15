@@ -72,12 +72,12 @@ public class ElasticsearchReporter extends ScheduledReporter {
 
         // build gauges
         JsonObjectBuilder gaugesBuilder = Json.createObjectBuilder();
-        gauges.forEach((key, value) -> gaugesBuilder.add(key, Double.valueOf(value.getValue().toString())));
+        gauges.forEach((key, value) -> gaugesBuilder.add(makeSafeName(key), Double.valueOf(value.getValue().toString())));
         reportBuilder.add("gauges", gaugesBuilder.build());
 
         // build counters
         JsonObjectBuilder countersBuilder = Json.createObjectBuilder();
-        gauges.forEach((key, value) -> countersBuilder.add(key, Double.valueOf(value.getValue().toString())));
+        counters.forEach((key, value) -> countersBuilder.add(makeSafeName(key), Double.valueOf(value.toString())));
         reportBuilder.add("counters", countersBuilder.build());
 
         String report = reportBuilder.build().toString();
@@ -99,7 +99,7 @@ public class ElasticsearchReporter extends ScheduledReporter {
             Response response = getClient().newCall(request).execute();
             int statusCode = response.code();
             if (statusCode != SC_HTTP_OK && statusCode != SC_HTTP_CREATED) {
-                logger.warn(String.format("Unexpected status code %d when checking ES Index at %s, response body: %s", statusCode, esUrl, response.body()));
+                logger.warn(String.format("Unexpected status code %d when checking ES Index at %s, response body: %s", statusCode, esUrl, response.body().string()));
             }
         } catch(IOException exc) {
             logger
@@ -121,9 +121,10 @@ public class ElasticsearchReporter extends ScheduledReporter {
     }
 
     private void configureEndpoint(String modifier, String resourcePath) throws IOException {
+        URL targetUrl = new URL(getEsUrl().toString() + modifier);
         RequestBody body = RequestBody.create(JSON, readResourceContent(resourcePath));
         Request request = new Request.Builder()
-            .url(new URL(getEsUrl().toString() + modifier))
+            .url(targetUrl)
             .put(body)
             .build();
 
@@ -132,7 +133,7 @@ public class ElasticsearchReporter extends ScheduledReporter {
             int statusCode = response.code();
             // expect OK if we put successfully or if it already exists.
             if (statusCode != SC_HTTP_OK) {
-                logger.warn("Attempt to configure ES endpoint responded with unexpected code %d and body %s", statusCode, response.body().string());
+                logger.warn(String.format("Attempt to configure ES endpoint %s responded with unexpected code %d", targetUrl.toString(), statusCode));
             }
         } catch(IOException exc) {
             logger.error(String.format("Failed prepare Elasticsearch endpoint (%s): %s", modifier, esUrl), exc);
@@ -170,6 +171,10 @@ public class ElasticsearchReporter extends ScheduledReporter {
             logger.warn("Failed to verify index in Elasticsearch: " + esUrl, exc);
             return false;
         }
+    }
+
+    private String makeSafeName(String name) {
+        return name.replace('.', '-');
     }
 
 

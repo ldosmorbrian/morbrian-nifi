@@ -80,5 +80,4 @@ public class MetricBuilder {
                                 .add(String.valueOf(timestamp), metricValue)
                 ).build();
     }
-
 }
