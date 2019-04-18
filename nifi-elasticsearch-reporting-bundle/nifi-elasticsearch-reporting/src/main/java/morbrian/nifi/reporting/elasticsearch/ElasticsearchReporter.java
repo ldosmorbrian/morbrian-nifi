@@ -39,8 +39,6 @@ public class ElasticsearchReporter extends ScheduledReporter {
     private static final int SC_HTTP_NOT_FOUND = 404;
     private final OkHttpClient client;
 
-
-
     private URL esUrl;
 
     public ElasticsearchReporter(OkHttpClient client, MetricRegistry metricRegistry, URL esUrl) {
@@ -174,9 +172,9 @@ public class ElasticsearchReporter extends ScheduledReporter {
     }
 
     private String makeSafeName(String name) {
-        return name.replace('.', '-');
+        // placeholder
+        return name;
     }
-
 
 }
 
